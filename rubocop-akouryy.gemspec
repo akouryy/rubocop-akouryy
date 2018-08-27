@@ -9,9 +9,11 @@ Gem::Specification.new do |spec|
   spec.authors       = ["akouryy"]
   spec.email         = ["akouryy7@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{my custom cops}
+  spec.description   = <<~EOS
+    custom cops by akouryy
+  EOS
+  spec.homepage      = "https://github.com/akouryy/rubocop-akouryy"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

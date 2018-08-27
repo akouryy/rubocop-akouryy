@@ -1,7 +1,3 @@
 require "rubocop/akouryy/version"
 
-module Rubocop
-  module Akouryy
-    # Your code goes here...
-  end
-end
+require "rubocop/cop/akouryy/redundant_parentheses_for_method_call"

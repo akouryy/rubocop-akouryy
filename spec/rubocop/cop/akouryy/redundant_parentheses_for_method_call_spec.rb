@@ -11,7 +11,7 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
     it 'registers an offense for parens' do
       expect_offense <<~RUBY
         foo()
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
   end
@@ -20,46 +20,81 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
     it 'registers an offense for parens with simple arguments' do
       expect_offense <<~RUBY
         foo(0, 1)
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^^^^ Do not use unnecessary parentheses for method calls.
         foo(0 + 1)
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with splat operators' do
       expect_offense <<~RUBY
         foo(0, *a)
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
         foo(0, **a)
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with keyword args' do
       expect_offense <<~RUBY
         foo(0, a: 1, b: 2)
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^^^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with blocks' do
       expect_offense <<~RUBY
         foo(0, &:a)
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
 
         foo(0) do end
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^^ Do not use unnecessary parentheses for method calls.
 
         foo(){}
-           ^ Do not use unnecessary parentheses for method calls.
+        ^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
-    it 'accepts parens for method calls followed by syntax with higher precedence' do
+    it 'accepts parens for method calls that are operands of unary operators' do
+      expect_no_offenses <<~RUBY
+        +foo(0)
+        -foo(0)
+        !foo(0)
+        foo *bar(0)
+        foo &bar(0)
+      RUBY
+    end
+
+    it 'accepts parens for method calls that are operands of binary operators with high precedence' do
+      expect_no_offenses <<~RUBY
+        1 + foo(0)
+        foo(0) ** 2
+      RUBY
+    end
+
+    it 'accepts parens for method calls followed by dot' do
       expect_no_offenses <<~RUBY
         foo(0).bar
+      RUBY
+    end
+
+    it 'accepts parens for method calls with arguments followed by braces' do
+      expect_no_offenses <<~RUBY
         foo(0){}
+      RUBY
+    end
+
+    it 'accepts parens for method calls that are not-last args of other method calls' do
+      expect_no_offenses <<~RUBY
         foo bar(0), 1
+      RUBY
+    end
+
+    it 'accepts redundant parens which is not part of method calls' do
+      expect_no_offenses <<~RUBY
+        foo (0)
+        foo (0 + 1)
+        foo (bar 0), 1
       RUBY
     end
   end

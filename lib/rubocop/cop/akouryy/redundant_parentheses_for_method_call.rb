@@ -37,6 +37,7 @@ module RuboCop
       #
       #   # good
       #   # Parentheses are required.
+      #   -foo(0)
       #   foo(0) + 1
       #   foo(0).bar
       #   foo(0){}
@@ -97,6 +98,12 @@ module RuboCop
       #     b: 2,
       #   )
       class RedundantParenthesesForMethodCall < Cop
+        MSG = 'Do not use unnecessary parentheses for method calls.'
+
+        def on_send node
+          return unless node.parenthesized_call?
+          add_offense node
+        end
       end
     end
   end

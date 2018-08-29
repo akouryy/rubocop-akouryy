@@ -14,6 +14,20 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
         ^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
+
+    it 'registers an offense for parens with brace block' do
+      expect_offense <<~RUBY
+        foo(){}
+        ^^^^^ Do not use unnecessary parentheses for method calls.
+      RUBY
+    end
+
+    it 'registers an offense for parens with do block' do
+      expect_offense <<~RUBY
+        foo() do end
+        ^^^^^ Do not use unnecessary parentheses for method calls.
+      RUBY
+    end
   end
 
   context 'with single-line args' do
@@ -84,7 +98,7 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
       RUBY
     end
 
-    it 'accepts parens for method calls with arguments followed by braces' do
+    it 'accepts parens for method calls with argument(s) followed by braces' do
       expect_no_offenses <<~RUBY
         foo(0){}
       RUBY

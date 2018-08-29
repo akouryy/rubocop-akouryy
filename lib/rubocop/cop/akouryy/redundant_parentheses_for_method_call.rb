@@ -143,7 +143,8 @@ module RuboCop
         private def not_nil? x; !x.nil? end
 
         private def parens_allowed? node
-          dot_receiver?(node) || high_operand?(node) || non_final_arg?(node)
+          dot_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
+            with_arg_s_and_brace_block?(node)
         end
 
         private def_node_matcher :receiver?, '^$(send equal?(%0) $_ ...)'
@@ -152,12 +153,16 @@ module RuboCop
 
         private def_node_matcher :special_operand?, '^({and or} ...)'
 
-        private p def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
+        private def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
 
         private def special_operand_op node
           return :'..' if node.irange_type?
           return :'...' if node.erange_type?
           special_operand?(node) && node.operator.to_sym
+        end
+
+        private def with_arg_s_and_brace_block? node
+          node.arguments.size > 0 && node.parent && node.parent.block_type? && node.parent.braces?
         end
       end
     end

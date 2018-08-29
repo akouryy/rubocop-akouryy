@@ -60,7 +60,13 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
         +foo(0)
         -foo(0)
         !foo(0)
+      RUBY
+    end
+
+    it 'accepts parens for method calls prefixed by splat-like syntaxes' do
+      expect_no_offenses <<~RUBY
         foo *bar(0)
+        foo **bar(0)
         foo &bar(0)
       RUBY
     end

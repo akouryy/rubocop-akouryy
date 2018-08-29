@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'set'
 
 module RuboCop
   module Cop
@@ -98,11 +99,61 @@ module RuboCop
       #     b: 2,
       #   )
       class RedundantParenthesesForMethodCall < Cop
+        # https://docs.ruby-lang.org/ja/latest/doc/spec=2foperator.html
+        HIGH_OPERATORS = %i[
+          ! +@ -@ ~
+          **
+          + - * / %
+          & | ^ << >>
+          == != < <= > >= === <=> =~ !~
+          && ||
+          .. ...
+        ].to_set
+
         MSG = 'Do not use unnecessary parentheses for method calls.'
 
         def on_send node
           return unless node.parenthesized_call?
+          return if parens_allowed? node
           add_offense node
+        end
+
+        private def dot_receiver? node
+          (send, = receiver? node) && send.loc.dot
+        end
+
+        private def high_operand? node
+          splat_like?(node) ||
+            (op = method_operand_op(node) || special_operand_op(node)) && high_operator?(op)
+        end
+
+        private def high_operator? op
+          HIGH_OPERATORS.include? op
+        end
+        
+        private def method_operand_op node
+          send, op = receiver?(node) || sole_arg_with_receiver?(node)
+          send && !send.loc.dot && op
+        end
+
+        private def nonnil? x; !x.nil? end
+        
+        private def parens_allowed? node
+          dot_receiver?(node) || high_operand?(node)
+        end
+        
+        private def_node_matcher :receiver?, '^$(send equal?(%0) $_ ...)'
+        
+        private def_node_matcher :sole_arg_with_receiver?, '^$(send #nonnil? $_ equal?(%0))'
+
+        private def_node_matcher :special_operand?, '^({and or} ...)'
+
+        private p def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
+
+        private def special_operand_op node
+          return :'..' if node.irange_type?
+          return :'...' if node.erange_type?
+          special_operand?(node) && node.operator.to_sym
         end
       end
     end

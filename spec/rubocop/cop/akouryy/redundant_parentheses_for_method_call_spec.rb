@@ -90,9 +90,11 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
       RUBY
     end
 
-    it 'accepts parens for method calls that are not-last args of other method calls' do
+    it 'accepts parens for method calls that are non-final args of other method calls' do
       expect_no_offenses <<~RUBY
         foo bar(0), 1
+        foo 0, bar(1), 2
+        foo 0, bar(1), *baz
       RUBY
     end
 

@@ -14,11 +14,11 @@ module RuboCop
     def self.inject_defaults!
       path = CONFIG_DEFAULT_PATH
       hash = ConfigLoader.load_file(path).to_hash
-      config = Config.new(hash, path)
+      config = Config.new hash, path
       puts "configuration from #{path}" if ConfigLoader.debug?
-      config = ConfigLoader.merge_with_default(config, path)
+      config = ConfigLoader.merge_with_default config, path
       File.write File.expand_path('log/debug', ROOT_PATH), config.inspect
-      ConfigLoader.instance_variable_set(:@default_configuration, config)
+      ConfigLoader.instance_variable_set :@default_configuration, config
     end
   end
 end

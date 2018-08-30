@@ -6,6 +6,6 @@ begin
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
-require_relative 'rubocop/akouryy'
+require_relative 'rubocop/expert'
 
-RuboCop::Akouryy.inject_defaults!
+RuboCop::Expert.inject_defaults!

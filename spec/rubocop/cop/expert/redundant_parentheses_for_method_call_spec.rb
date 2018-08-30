@@ -5,7 +5,7 @@
 #   (c) 2012-18 Bozhidar Batsov
 #   MIT License https://github.com/rubocop-hq/rubocop/blob/master/LICENSE.txt
 
-describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
+describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
   subject(:cop) { described_class.new config }
 
   context 'without args' do

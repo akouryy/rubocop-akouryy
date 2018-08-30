@@ -1,4 +1,4 @@
 # See also: https://github.com/airbnb/ruby/blob/3b049d7523/rubocop-airbnb/.rubocop_airbnb.yml
 
 require:
-  - ./lib/rubocop-akouryy.rb
+  - ./lib/rubocop-expert.rb

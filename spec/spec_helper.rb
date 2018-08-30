@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'rubocop-akouryy'
+require 'rubocop-expert'
 require 'rubocop/rspec/support'
 
 RSpec.configure do |config|

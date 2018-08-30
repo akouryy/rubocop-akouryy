@@ -6,7 +6,7 @@ require 'rubocop/akouryy/version'
 
 Gem::Specification.new do |spec|
   spec.name = 'rubocop-akouryy'
-  spec.version = Rubocop::Akouryy::VERSION
+  spec.version = RuboCop::Akouryy::VERSION
   spec.authors = ['akouryy']
   spec.email = ['akouryy7@gmail.com']
 

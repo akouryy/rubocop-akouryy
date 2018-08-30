@@ -7,6 +7,9 @@ Layout/MultilineOperationIndentation:
 Layout/ExtraSpacing:
   AllowForAlignment: false
 
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 
@@ -20,6 +23,9 @@ Metrics/BlockLength:
 Metrics/LineLength:
   Max: 100
 
+Metrics/MethodLength:
+  Max: 15
+
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
     [op]
@@ -32,3 +38,6 @@ Style/EmptyCaseCondition:
 
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses_except_multiline
+
+Style/NestedParenthesizedCalls:
+  Enabled: false

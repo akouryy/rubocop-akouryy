@@ -82,6 +82,7 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
         foo *bar(0)
         foo **bar(0)
         foo &bar(0)
+        foo = *bar(0)
       RUBY
     end
 
@@ -101,6 +102,19 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
     it 'accepts parens for method calls with argument(s) followed by braces' do
       expect_no_offenses <<~RUBY
         foo(0){}
+      RUBY
+    end
+
+    it 'accepts parens for method calls with argument(s) followed by brackets' do
+      expect_no_offenses <<~RUBY
+        foo(0)[1, 2]
+        foo(0)[1, 2] = 3
+      RUBY
+    end
+
+    it 'accepts parens for special call syntax of method `call`' do
+      expect_no_offenses <<~RUBY
+        foo.(0)
       RUBY
     end
 

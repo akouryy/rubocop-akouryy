@@ -136,11 +136,7 @@ module RuboCop
           send && !send.loc.dot && op
         end
 
-        private def_node_matcher :non_final_arg?, '^$(send _ _ ... #not_equal?(%0))'
-
-        private def not_equal? x, y; !x.equal?(y) end
-
-        private def not_nil? x; !x.nil? end
+        private def_node_matcher :non_final_arg?, '^(send !equal?(%0) _ ... !equal?(%0))'
 
         private def parens_allowed? node
           dot_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
@@ -149,7 +145,7 @@ module RuboCop
 
         private def_node_matcher :receiver?, '^$(send equal?(%0) $_ ...)'
 
-        private def_node_matcher :sole_arg_with_receiver?, '^$(send #not_nil? $_ equal?(%0))'
+        private def_node_matcher :sole_arg_with_receiver?, '^$(send !nil? $_ equal?(%0))'
 
         private def_node_matcher :special_operand?, '^({and or} ...)'
 

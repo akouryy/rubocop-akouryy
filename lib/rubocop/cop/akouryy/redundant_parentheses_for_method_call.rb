@@ -87,8 +87,15 @@ module RuboCop
       #     a: 1,
       #     b: 2,
       #   )
+      #   foo 0, 1,
+      #     a: 1,
+      #     b: 2
+      #   foo \
+      #     0,
+      #     a: 1,
+      #     b: 2
       #
-      # @example AllowBeforeNewline: always
+      # @example AllowInMultilineCall: always
       #   # good
       #   foo(0, 1,
       #     a: 2,
@@ -99,6 +106,13 @@ module RuboCop
       #     a: 1,
       #     b: 2,
       #   )
+      #   foo 0, 1,
+      #     a: 1,
+      #     b: 2
+      #   foo \
+      #     0,
+      #     a: 1,
+      #     b: 2
       class RedundantParenthesesForMethodCall < Cop
         # https://docs.ruby-lang.org/ja/latest/doc/spec=2foperator.html
         HIGH_OPERATORS = %i[
@@ -113,10 +127,22 @@ module RuboCop
 
         MSG = 'Do not use unnecessary parentheses for method calls.'
 
+        MULTILINE_CONFIG_NAME = 'AllowInMultilineCall'
+        MULTILINE_CONFIG_VALUES = %i[never before_newline always].freeze
+
         def on_send node
           return unless node.parenthesized_call?
           return if parens_allowed? node
           add_offense node
+        end
+
+        private def allow_in_multiline_call
+          @allow_in_multiline_call ||=
+            cop_config[MULTILINE_CONFIG_NAME].to_sym.tap do |a|
+              unless MULTILINE_CONFIG_VALUES.include? a
+                raise "Unknown option: #{a} for #{MULTILINE_CONFIG_NAME}"
+              end
+            end
         end
 
         private def_node_matcher :dot_receiver?, <<~PAT

@@ -62,7 +62,6 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
       expect_offense <<~RUBY
         foo(0, &:a)
         ^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
-
         foo(0) do end
         ^^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
@@ -132,6 +131,101 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
         foo (0 + 1)
         foo (bar 0), 1
       RUBY
+    end
+  end
+
+  context 'with multiline args' do
+    context 'when AllowInMultilineCall is \'never\'' do
+      let(:cop_config) { { 'AllowInMultilineCall' => 'never' } }
+
+      it 'registers an offense for parens with multiline args' \
+          ' the first of which is in the same line' do
+        expect_offense <<~RUBY
+          foo(0,
+          ^^^^^^ Do not use unnecessary parentheses for method calls.
+            1)
+          foo(0, 1,
+          ^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+            a: 2,
+            b: 3,
+          )
+        RUBY
+      end
+
+      it 'registers an offense for parens followed by newline' do
+        expect_offense <<~RUBY
+          foo(
+          ^^^^ Do not use unnecessary parentheses for method calls.
+            0,
+            1)
+          foo(
+          ^^^^ Do not use unnecessary parentheses for method calls.
+            0, 1,
+            a: 2,
+            b: 3,
+          )
+        RUBY
+      end
+    end
+
+    context 'when AllowInMultilineCall is \'before_newline\'' do
+      let(:cop_config) { { 'AllowInMultilineCall' => 'before_newline' } }
+
+      it 'accepts parens with multiline args' \
+          ' the first of which is in the same line' do
+        expect_no_offenses <<~RUBY
+          foo(0,
+            1)
+          foo(0, 1,
+            a: 2,
+            b: 3,
+          )
+        RUBY
+      end
+
+      it 'registers an offense for parens followed by newline' do
+        expect_offense <<~RUBY
+          foo(
+          ^^^^ Do not use unnecessary parentheses for method calls.
+            0,
+            1)
+          foo(
+          ^^^^ Do not use unnecessary parentheses for method calls.
+            0, 1,
+            a: 2,
+            b: 3,
+          )
+        RUBY
+      end
+    end
+
+    context 'when AllowInMultilineCall is \'always\'' do
+      let(:cop_config) { { 'AllowInMultilineCall' => 'always' } }
+
+      it 'accepts parens with multiline args' \
+          ' the first of which is in the same line' do
+        expect_no_offenses <<~RUBY
+          foo(0,
+            1)
+          foo(0, 1,
+            a: 2,
+            b: 3,
+          )
+        RUBY
+      end
+
+      it 'accepts parens followed by newline' do
+        expect_no_offenses <<~RUBY
+          foo(
+            0,
+            1)
+          foo(
+            0, 1,
+            a: 2,
+            b: 3,
+          )
+        RUBY
+      end
     end
   end
 end

@@ -1,5 +1,6 @@
-require:
-  - ./lib/rubocop-akouryy.rb
+inherit_from:
+  - .rubocop_expert.yml
+  - ./config/default.yml
 
 AllCops:
   TargetRubyVersion: 2.5

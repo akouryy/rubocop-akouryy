@@ -45,6 +45,8 @@ module RuboCop
       #   foo(0){}
       #   foo bar(0), 1
       #   foo bar(0) do end
+      #   [foo(0)]
+      #   { foo: bar(0) }
       #   case 0; when foo(1); end
       #
       #   # good
@@ -154,6 +156,8 @@ module RuboCop
             end
         end
 
+        private def_node_matcher :array_element?, '^(array ...)'
+
         private def_node_matcher :bracket_receiver?, <<~PAT
           ^[
             (send
@@ -177,6 +181,13 @@ module RuboCop
         private def explicit_receiver? node
           bracket_receiver?(node) || dot_receiver?(node)
         end
+
+        private def_node_matcher :hash_element?, <<~PAT
+          [
+            ^^(hash ...)
+            ^(pair _ equal?(%0))
+          ]
+        PAT
 
         private def high_method_operand? node
           high_method_operator_receiver?(node) || high_method_operator_arg?(node)
@@ -222,7 +233,7 @@ module RuboCop
 
         private def multiline_config
           @multiline_config ||=
-            cop_config[MULTILINE_CONFIG_NAME].to_sym.tap do |a|
+            (cop_config[MULTILINE_CONFIG_NAME] || :before_newline).to_sym.tap do |a|
               unless MULTILINE_CONFIG_VALUES.include? a
                 raise "Unknown option: #{MULTILINE_CONFIG_NAME}: #{a}"
               end
@@ -240,7 +251,7 @@ module RuboCop
         private def parens_allowed? node
           explicit_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
             splat_like?(node) || with_arg_s_and_brace_block?(node) || node.implicit_call? ||
-            when_cond?(node)
+            when_cond?(node) || array_element?(node) || hash_element?(node)
         end
 
         private def_node_matcher :special_operand?, '^({and or} ...)'

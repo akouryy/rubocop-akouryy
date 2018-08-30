@@ -1,0 +1,53 @@
+inherit_from:
+  - .rubocop_expert.yml
+  - ./config/default.yml
+
+AllCops:
+  TargetRubyVersion: 2.5
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/ExtraSpacing:
+  AllowForAlignment: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+
+Metrics/BlockLength:
+  Exclude:
+    - '*.gemspec'
+  ExcludedMethods:
+    - describe
+    - context
+
+Metrics/ClassLength:
+  Max: 500
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/MethodLength:
+  Max: 15
+
+Naming/UncommunicativeMethodParamName:
+  AllowedNames:
+    [op]
+
+Style/AccessModifierDeclarations:
+  EnforcedStyle: inline
+
+Style/EmptyCaseCondition:
+  Enabled: false
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses_except_multiline
+
+Style/NestedParenthesizedCalls:
+  Enabled: false

@@ -1,0 +1,4 @@
+Akouryy/RedundantParenthesesForMethodCall:
+  Description: 'Remove parentheses for method calls whenever possible.'
+  Enabled: true
+  AllowInMultilineCall: before_newline

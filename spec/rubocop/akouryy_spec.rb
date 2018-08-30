@@ -1,9 +1,7 @@
-RSpec.describe Rubocop::Akouryy do
-  it "has a version number" do
-    expect(Rubocop::Akouryy::VERSION).not_to be nil
-  end
+# frozen_string_literal: true
 
-  it "does something useful" do
-    expect(false).to eq(true)
+RSpec.describe RuboCop::Akouryy do
+  it 'has a version number' do
+    expect(RuboCop::Akouryy::VERSION).not_to be nil
   end
 end

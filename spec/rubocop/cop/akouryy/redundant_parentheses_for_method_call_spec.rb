@@ -63,9 +63,6 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
 
         foo(0) do end
         ^^^^^^ Do not use unnecessary parentheses for method calls.
-
-        foo(){}
-        ^^^^^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 

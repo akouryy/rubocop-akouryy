@@ -47,7 +47,7 @@ module RuboCop
       #
       #   # good
       #   # Parentheses are not part of method call.
-      #   # Use the default cop Style/RedundantParentheses to prohibit these.
+      #   # Use the default cop Style/RedundantParentheses.
       #   foo (0)
       #   foo (0 + 1)
       #   foo (bar 0), 1
@@ -118,48 +118,84 @@ module RuboCop
           add_offense node
         end
 
-        private def dot_receiver? node
-          (send, = receiver? node) && send.loc.dot
+        private def_node_matcher :dot_receiver?, <<~PAT
+          ^[
+            (send
+              equal?(%0)
+              $_
+              ...)
+            dot?
+          ]
+        PAT
+
+        private def high_method_operand? node
+          high_method_operator_receiver?(node) || high_method_operator_arg?(node)
         end
 
+        private def_node_matcher :high_method_operator_arg?, <<~PAT
+          ^[
+            (send
+              !nil?
+              #high_operator?
+              equal?(%0))
+            !dot?
+          ]
+        PAT
+
+        private def_node_matcher :high_method_operator_receiver?, <<~PAT
+          ^[
+            (send
+              equal?(%0)
+              #high_operator?
+              ...)
+            !dot?
+          ]
+        PAT
+
         private def high_operand? node
-          splat_like?(node) ||
-            (op = method_operand_op(node) || special_operand_op(node)) && high_operator?(op)
+          high_method_operand?(node) || high_special_operand?(node)
         end
 
         private def high_operator? op
-          HIGH_OPERATORS.include? op
+          HIGH_OPERATORS.include? op.to_sym
         end
 
-        private def method_operand_op node
-          send, op = receiver?(node) || sole_arg_with_receiver?(node)
-          send && !send.loc.dot && op
+        private def high_special_operand? node
+          op =
+            case
+            when node.irange_type? then '..'
+            when node.erange_type? then '...'
+            when special_operand?(node) then node.operator
+            end
+          op && high_operator?(op)
         end
 
-        private def_node_matcher :non_final_arg?, '^(send !equal?(%0) _ ... !equal?(%0))'
+        private def_node_matcher :non_final_arg?, <<~PAT
+          ^(send
+            !equal?(%0)
+            _
+            ...               #{ '%0 is here'; nil }
+            !equal?(%0))
+        PAT
 
         private def parens_allowed? node
           dot_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
-            with_arg_s_and_brace_block?(node)
+            splat_like?(node) || with_arg_s_and_brace_block?(node)
         end
-
-        private def_node_matcher :receiver?, '^$(send equal?(%0) $_ ...)'
-
-        private def_node_matcher :sole_arg_with_receiver?, '^$(send !nil? $_ equal?(%0))'
 
         private def_node_matcher :special_operand?, '^({and or} ...)'
 
         private def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
 
-        private def special_operand_op node
-          return :'..' if node.irange_type?
-          return :'...' if node.erange_type?
-          special_operand?(node) && node.operator.to_sym
-        end
-
-        private def with_arg_s_and_brace_block? node
-          node.arguments.size > 0 && node.parent && node.parent.block_type? && node.parent.braces?
-        end
+        private def_node_matcher :with_arg_s_and_brace_block?, <<~PAT
+          [
+            (send _ _ _ ...)  #{ '>=1 args'; nil }
+            ^[
+              (block ...)
+              braces?
+            ]
+          ]
+        PAT
       end
     end
   end

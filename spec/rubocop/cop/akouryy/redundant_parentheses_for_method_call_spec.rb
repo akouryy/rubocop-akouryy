@@ -36,6 +36,8 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
       expect_offense <<~RUBY
         foo(0, 1)
            ^ Do not use unnecessary parentheses for method calls.
+        foo(a = 1)
+           ^ Do not use unnecessary parentheses for method calls.
         bar.
           foo(0 + 1)
              ^ Do not use unnecessary parentheses for method calls.
@@ -64,6 +66,20 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
            ^ Do not use unnecessary parentheses for method calls.
         foo(0) do end
            ^ Do not use unnecessary parentheses for method calls.
+      RUBY
+    end
+
+    it 'registers an offence for parens of a method call in single-value return' do
+      expect_offense <<~RUBY
+        return foo(0, 1)
+                  ^ Do not use unnecessary parentheses for method calls.
+      RUBY
+    end
+
+    it 'registers an offence for parens of a call as a for-stmt enumerable' do
+      expect_offense <<~RUBY
+        for a in foo(0, 1); end
+                    ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
@@ -116,17 +132,30 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
         RUBY
       end
 
-      it 'accepts parens for special call syntax of method `call`' do
+      it 'accepts parens for special call syntax of method named \'call\'' do
         expect_no_offenses <<~RUBY
           foo.(0)
         RUBY
       end
 
-      it 'accepts parens for method calls that are non-final args of other method calls' do
+      it 'accepts parens for a method call that is among multiple args of other method calls' do
         expect_no_offenses <<~RUBY
           foo bar(0), 1
-          foo 0, bar(1), 2
+          foo 0, 1, bar(2)
           foo 0, bar(1), *baz
+        RUBY
+      end
+
+      it 'accepts parens for method calls in right hand side of multi-assignment' do
+        expect_no_offenses <<~RUBY
+          a = 0, foo(1)
+        RUBY
+      end
+
+      it 'accepts parens for method calls in multiple return' do
+        expect_no_offenses <<~RUBY
+          return 0, foo(1)
+          return foo(0), 1
         RUBY
       end
 
@@ -141,6 +170,13 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
       it 'accepts parens for method calls in when condition' do
         expect_no_offenses <<~RUBY
           case 0; when foo(1); end
+        RUBY
+      end
+
+      it 'accepts parens for a method call as the default of an optional parameter' do
+        expect_no_offenses <<~RUBY
+          def foo a = bar(0); end
+          def foo a: baz(1); end
         RUBY
       end
 
@@ -173,6 +209,8 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
           [(foo(0))]
                ^ Do not use unnecessary parentheses for method calls.
           case 0; when(foo(1)); end
+                          ^ Do not use unnecessary parentheses for method calls.
+          def foo a = (bar(0)); end
                           ^ Do not use unnecessary parentheses for method calls.
         RUBY
       end

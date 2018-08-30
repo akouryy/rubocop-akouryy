@@ -12,30 +12,36 @@ module RuboCop
       #   foo()
       #   foo(0, 1)
       #   foo(0 + 1)
+      #   foo(a = 1)
       #   foo(0, *a)
       #   foo(0, a: 1, b: 2)
       #   foo bar(0, 1)
       #   foo(bar 0, 1)
+      #   foo 0, (bar(1))
       #   foo(0) do end
       #   foo(/a/)
       #   foo(%w[a b c])
       #   foo(<<~STR)
       #     heredoc
       #   STR
+      #   for a in foo(0, 1); end
       #
       #   # good
       #   foo
       #   foo 0, 1
       #   foo 0 + 1
+      #   foo a = 1
       #   foo 0, *a
       #   foo 0, a: 1, b: 2
       #   foo bar 0, 1
+      #   foo 0, (bar 1)
       #   foo 0 do end
       #   foo /a/
       #   foo %w[a b c]
       #   foo <<~STR
       #     heredoc
       #   STR
+      #   for a in foo 0, 1; end
       #
       #   # good
       #   # Parentheses are required.
@@ -43,11 +49,15 @@ module RuboCop
       #   foo(0) + 1
       #   foo(0).bar
       #   foo(0){}
+      #   foo 0, bar(1)
       #   foo bar(0), 1
+      #   a = 0, foo(1) # multiple assignment
       #   foo bar(0) do end
       #   [foo(0)]
       #   { foo: bar(0) }
       #   case 0; when foo(1); end
+      #   def foo a = bar(0), b: baz(1); end
+      #   return 0, foo(1) # return multiple value
       #
       #   # good
       #   # Parentheses are not part of method call.
@@ -156,6 +166,17 @@ module RuboCop
             end
         end
 
+        private def_node_matcher :among_multiple_args?, <<~PAT
+          ^(send
+            !equal?(%0)
+            _
+            ...)              #{'%0 is here' * 0}
+        PAT
+
+        private def_node_matcher :among_multiple_return?, <<~PAT
+          ^(return _ _ ...)   #{'>=1 values' * 0}
+        PAT
+
         private def_node_matcher :array_element?, '^(array ...)'
 
         private def_node_matcher :bracket_receiver?, <<~PAT
@@ -165,6 +186,14 @@ module RuboCop
               { :[] :[]= }
               ...)
             !dot?
+          ]
+        PAT
+
+        private def_node_matcher :default_of_optarg?, <<~PAT
+          ^[
+            ({optarg kwoptarg}
+              _
+              equal?(%0))
           ]
         PAT
 
@@ -240,18 +269,11 @@ module RuboCop
             end
         end
 
-        private def_node_matcher :non_final_arg?, <<~PAT
-          ^(send
-            !equal?(%0)
-            _
-            ...               #{'%0 is here' * 0}
-            !equal?(%0))
-        PAT
-
         private def parens_allowed? node
-          explicit_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
+          explicit_receiver?(node) || high_operand?(node) || among_multiple_args?(node) ||
             splat_like?(node) || with_arg_s_and_brace_block?(node) || node.implicit_call? ||
-            when_cond?(node) || array_element?(node) || hash_element?(node)
+            when_cond?(node) || array_element?(node) || hash_element?(node) ||
+            among_multiple_return?(node) || default_of_optarg?(node)
         end
 
         private def_node_matcher :special_operand?, '^({and or} ...)'

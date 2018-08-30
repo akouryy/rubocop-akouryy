@@ -60,7 +60,7 @@ module RuboCop
       #   return 0, foo(1) # return multiple value
       #
       #   # good
-      #   # Parentheses are not part of method call.
+      #   # Parentheses are not part of the method call.
       #   # Use the default cop Style/RedundantParentheses.
       #   foo (0)
       #   foo (0 + 1)

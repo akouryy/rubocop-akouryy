@@ -10,9 +10,10 @@ Gem::Specification.new do |spec|
   spec.authors = ['akouryy']
   spec.email = ['akouryy7@gmail.com']
 
-  spec.summary = 'RuboCop custom cops'
+  spec.summary = 'RuboCop custom cops for elegance'
   spec.description = <<~DESC
-    RuboCop custom cops for elegance
+    RuboCop custom cops for elegance.
+    At the moment there is only one cop: Expert/RedundantParenthesesForMethodCall.
   DESC
   spec.homepage = 'https://github.com/akouryy/rubocop-expert'
   spec.license = 'MIT'

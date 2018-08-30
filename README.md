@@ -4,7 +4,7 @@
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this line to Gemfile:
 
 ```ruby
 gem 'rubocop-akouryy'
@@ -17,6 +17,13 @@ gem install rubocop rubocop-rspec rubocop-akouryy
 ```
 
 ## Usage
+
+Require this gem in .rubocop.yml:
+
+```yaml
+require:
+  - rubocop-expert
+```
 
 ### Cops
 

@@ -153,6 +153,16 @@ module RuboCop
             end
         end
 
+        private def_node_matcher :bracket_receiver?, <<~PAT
+          ^[
+            (send
+              equal?(%0)
+              { :[] :[]= }
+              ...)
+            !dot?
+          ]
+        PAT
+
         private def_node_matcher :dot_receiver?, <<~PAT
           ^[
             (send
@@ -162,6 +172,10 @@ module RuboCop
             dot?
           ]
         PAT
+
+        private def explicit_receiver? node
+          bracket_receiver?(node) || dot_receiver?(node)
+        end
 
         private def high_method_operand? node
           high_method_operator_receiver?(node) || high_method_operator_arg?(node)
@@ -223,8 +237,8 @@ module RuboCop
         PAT
 
         private def parens_allowed? node
-          dot_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
-            splat_like?(node) || with_arg_s_and_brace_block?(node)
+          explicit_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
+            splat_like?(node) || with_arg_s_and_brace_block?(node) || node.implicit_call?
         end
 
         private def_node_matcher :special_operand?, '^({and or} ...)'

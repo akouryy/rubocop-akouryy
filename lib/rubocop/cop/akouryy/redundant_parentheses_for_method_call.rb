@@ -212,8 +212,8 @@ module RuboCop
         private def high_special_operand? node
           op =
             case
-            when node.irange_type? then '..'
-            when node.erange_type? then '...'
+            when node.parent&.irange_type? then '..'
+            when node.parent&.erange_type? then '...'
             when special_operand?(node) then node.parent.operator
             end
           op && high_operator?(op)

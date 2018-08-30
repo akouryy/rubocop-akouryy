@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module RuboCop
   module Akouryy # :nodoc:
     ROOT_PATH = File.expand_path '../..', __dir__

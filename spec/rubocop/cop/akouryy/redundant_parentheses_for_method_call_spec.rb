@@ -129,6 +129,12 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
       RUBY
     end
 
+    it 'accepts parens for method calls in when condition' do
+      expect_no_offenses <<~RUBY
+        case 0; when foo(1); end
+      RUBY
+    end
+
     it 'accepts redundant parens which is not part of method calls' do
       expect_no_offenses <<~RUBY
         foo (0)

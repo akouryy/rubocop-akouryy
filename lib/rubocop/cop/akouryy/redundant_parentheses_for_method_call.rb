@@ -45,6 +45,7 @@ module RuboCop
       #   foo(0){}
       #   foo bar(0), 1
       #   foo bar(0) do end
+      #   case 0; when foo(1); end
       #
       #   # good
       #   # Parentheses are not part of method call.
@@ -238,12 +239,15 @@ module RuboCop
 
         private def parens_allowed? node
           explicit_receiver?(node) || high_operand?(node) || non_final_arg?(node) ||
-            splat_like?(node) || with_arg_s_and_brace_block?(node) || node.implicit_call?
+            splat_like?(node) || with_arg_s_and_brace_block?(node) || node.implicit_call? ||
+            when_cond?(node)
         end
 
         private def_node_matcher :special_operand?, '^({and or} ...)'
 
         private def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
+
+        private def_node_matcher :when_cond?, '^(when equal?(%0) _)'
 
         private def_node_matcher :with_arg_s_and_brace_block?, <<~PAT
           [

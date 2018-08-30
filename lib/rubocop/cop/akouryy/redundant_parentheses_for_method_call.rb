@@ -260,6 +260,10 @@ module RuboCop
           op && high_operator?(op)
         end
 
+        private def implicit_call? node
+          node.implicit_call?
+        end
+
         private def multiline_config
           @multiline_config ||=
             (cop_config[MULTILINE_CONFIG_NAME] || :before_newline).to_sym.tap do |a|
@@ -270,10 +274,21 @@ module RuboCop
         end
 
         private def parens_allowed? node
-          explicit_receiver?(node) || high_operand?(node) || among_multiple_args?(node) ||
-            splat_like?(node) || with_arg_s_and_brace_block?(node) || node.implicit_call? ||
-            when_cond?(node) || array_element?(node) || hash_element?(node) ||
-            among_multiple_return?(node) || default_of_optarg?(node)
+          %i[
+            among_multiple_args?
+            among_multiple_return?
+            array_element?
+            default_of_optarg?
+            explicit_receiver?
+            hash_element?
+            high_operand?
+            implicit_call?
+            splat_like?
+            when_cond?
+            with_arg_s_and_brace_block?
+          ].any? do |sym|
+            __send__ sym, node
+          end
         end
 
         private def_node_matcher :special_operand?, '^({and or} ...)'

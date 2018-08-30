@@ -12,21 +12,21 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
     it 'registers an offense for parens' do
       expect_offense <<~RUBY
         foo()
-        ^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with brace block' do
       expect_offense <<~RUBY
         foo(){}
-        ^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with do block' do
       expect_offense <<~RUBY
         foo() do end
-        ^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
   end
@@ -35,34 +35,35 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
     it 'registers an offense for parens with simple arguments' do
       expect_offense <<~RUBY
         foo(0, 1)
-        ^^^^^^^^^ Do not use unnecessary parentheses for method calls.
-        foo(0 + 1)
-        ^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
+        bar.
+          foo(0 + 1)
+             ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with splat operators' do
       expect_offense <<~RUBY
         foo(0, *a)
-        ^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
         foo(0, **a)
-        ^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with keyword args' do
       expect_offense <<~RUBY
         foo(0, a: 1, b: 2)
-        ^^^^^^^^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
     it 'registers an offense for parens with blocks' do
       expect_offense <<~RUBY
         foo(0, &:a)
-        ^^^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
         foo(0) do end
-        ^^^^^^ Do not use unnecessary parentheses for method calls.
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
@@ -141,10 +142,10 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
           ' the first of which is in the same line' do
         expect_offense <<~RUBY
           foo(0,
-          ^^^^^^ Do not use unnecessary parentheses for method calls.
+             ^ Do not use unnecessary parentheses for method calls.
             1)
           foo(0, 1,
-          ^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+             ^ Do not use unnecessary parentheses for method calls.
             a: 2,
             b: 3,
           )
@@ -154,11 +155,11 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
       it 'registers an offense for parens followed by newline' do
         expect_offense <<~RUBY
           foo(
-          ^^^^ Do not use unnecessary parentheses for method calls.
+             ^ Do not use unnecessary parentheses for method calls.
             0,
             1)
           foo(
-          ^^^^ Do not use unnecessary parentheses for method calls.
+             ^ Do not use unnecessary parentheses for method calls.
             0, 1,
             a: 2,
             b: 3,
@@ -174,10 +175,10 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
           ' the first of which is in the same line' do
         expect_offense <<~RUBY
           foo(0,
-          ^^^^^^ Do not use unnecessary parentheses for method calls.
+             ^ Do not use unnecessary parentheses for method calls.
             1)
           foo(0, 1,
-          ^^^^^^^^^ Do not use unnecessary parentheses for method calls.
+             ^ Do not use unnecessary parentheses for method calls.
             a: 2,
             b: 3,
           )

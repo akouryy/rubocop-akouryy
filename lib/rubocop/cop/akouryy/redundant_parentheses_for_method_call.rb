@@ -134,7 +134,7 @@ module RuboCop
           return unless node.parenthesized_call?
           return if parens_allowed? node
           return if allowed_by_multiline_config? node
-          add_offense node
+          add_offense node, location: :begin
         end
 
         private def allowed_by_multiline_config? node

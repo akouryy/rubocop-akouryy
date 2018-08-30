@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['akouryy']
   spec.email = ['akouryy7@gmail.com']
 
-  spec.summary = 'my custom cops'
+  spec.summary = 'RuboCop custom cops'
   spec.description = <<~DESC
     RuboCop custom cops for elegance
   DESC

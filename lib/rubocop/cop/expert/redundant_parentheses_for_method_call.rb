@@ -4,7 +4,7 @@ require 'set'
 
 module RuboCop
   module Cop
-    module Akouryy
+    module Expert
       # This cop checks for all omittable parentheses in method calls.
       #
       # @example

@@ -2,19 +2,19 @@
 
 lib = File.expand_path 'lib', __dir__
 $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
-require 'rubocop/akouryy/version'
+require 'rubocop/expert/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'rubocop-akouryy'
-  spec.version = RuboCop::Akouryy::VERSION
+  spec.name = 'rubocop-expert'
+  spec.version = RuboCop::Expert::VERSION
   spec.authors = ['akouryy']
   spec.email = ['akouryy7@gmail.com']
 
-  spec.summary = 'my custom cops'
+  spec.summary = 'RuboCop custom cops'
   spec.description = <<~DESC
-    custom cops by akouryy
+    RuboCop custom cops for elegance
   DESC
-  spec.homepage = 'https://github.com/akouryy/rubocop-akouryy'
+  spec.homepage = 'https://github.com/akouryy/rubocop-expert'
   spec.license = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

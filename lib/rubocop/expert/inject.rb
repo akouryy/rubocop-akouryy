@@ -8,7 +8,7 @@
 require 'yaml'
 
 module RuboCop
-  module Akouryy # :nodoc:
+  module Expert # :nodoc:
     # Because RuboCop doesn't yet support plugins, we have to monkey patch in a
     # bit of our configuration.
     def self.inject_defaults!

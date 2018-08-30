@@ -214,7 +214,7 @@ module RuboCop
             case
             when node.irange_type? then '..'
             when node.erange_type? then '...'
-            when special_operand?(node) then node.operator
+            when special_operand?(node) then node.parent.operator
             end
           op && high_operator?(op)
         end

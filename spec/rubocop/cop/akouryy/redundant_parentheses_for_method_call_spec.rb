@@ -89,6 +89,10 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
       expect_no_offenses <<~RUBY
         1 + foo(0)
         foo(0) ** 2
+        foo(0) && 3
+        4 || foo(0)
+        foo(0)..5
+        6...foo(0)
       RUBY
     end
 

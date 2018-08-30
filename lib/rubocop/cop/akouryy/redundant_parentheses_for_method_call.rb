@@ -133,15 +133,23 @@ module RuboCop
         def on_send node
           return unless node.parenthesized_call?
           return if parens_allowed? node
+          return if allowed_by_multiline_config? node
           add_offense node
         end
 
-        private def allow_in_multiline_call
-          @allow_in_multiline_call ||=
-            cop_config[MULTILINE_CONFIG_NAME].to_sym.tap do |a|
-              unless MULTILINE_CONFIG_VALUES.include? a
-                raise "Unknown option: #{a} for #{MULTILINE_CONFIG_NAME}"
-              end
+        private def allowed_by_multiline_config? node
+          fn_ln = node.loc.selector&.line
+          first_arg_ln = node.arguments[0]&.loc&.line
+          par_end_ln = node.loc.end.line
+
+          fn_ln && fn_ln != par_end_ln &&
+            case multiline_config
+            when :never
+              false
+            when :before_newline
+              first_arg_ln && fn_ln != first_arg_ln
+            when :always
+              true
             end
         end
 
@@ -195,6 +203,15 @@ module RuboCop
             when special_operand?(node) then node.operator
             end
           op && high_operator?(op)
+        end
+
+        private def multiline_config
+          @multiline_config ||=
+            cop_config[MULTILINE_CONFIG_NAME].to_sym.tap do |a|
+              unless MULTILINE_CONFIG_VALUES.include? a
+                raise "Unknown option: #{MULTILINE_CONFIG_NAME}: #{a}"
+              end
+            end
         end
 
         private def_node_matcher :non_final_arg?, <<~PAT

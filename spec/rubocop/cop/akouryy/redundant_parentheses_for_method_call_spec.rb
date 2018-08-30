@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 # Forked from:
-#   https://github.com/rubocop-hq/rubocop/blob/00fe34e08f680ae7e45f78bfe27c453cc12bb44a/spec/rubocop/cop/style/method_call_without_args_parentheses_spec.rb
+#   rubocop-hq/rubocop https://github.com/rubocop-hq/rubocop/blob/00fe34e08f680ae7e45f78bfe27c453cc12bb44a/spec/rubocop/cop/style/method_call_without_args_parentheses_spec.rb
 #   (c) 2012-18 Bozhidar Batsov
 #   MIT License https://github.com/rubocop-hq/rubocop/blob/master/LICENSE.txt
 
-describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
-  let(:config) { RuboCop::Config.new }
+describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall, :config do
   subject(:cop) { described_class.new config }
 
   context 'without args' do
@@ -171,26 +170,26 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
     context 'when AllowInMultilineCall is \'before_newline\'' do
       let(:cop_config) { { 'AllowInMultilineCall' => 'before_newline' } }
 
-      it 'accepts parens with multiline args' \
+      it 'registers an offense for parens with multiline args' \
           ' the first of which is in the same line' do
-        expect_no_offenses <<~RUBY
+        expect_offense <<~RUBY
           foo(0,
+          ^^^^^^ Do not use unnecessary parentheses for method calls.
             1)
           foo(0, 1,
+          ^^^^^^^^^ Do not use unnecessary parentheses for method calls.
             a: 2,
             b: 3,
           )
         RUBY
       end
 
-      it 'registers an offense for parens followed by newline' do
-        expect_offense <<~RUBY
+      it 'accepts parens followed by newline' do
+        expect_no_offenses <<~RUBY
           foo(
-          ^^^^ Do not use unnecessary parentheses for method calls.
             0,
             1)
           foo(
-          ^^^^ Do not use unnecessary parentheses for method calls.
             0, 1,
             a: 2,
             b: 3,

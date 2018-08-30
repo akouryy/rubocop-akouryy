@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Forked from:
 #   airbnb/ruby https://github.com/airbnb/ruby/blob/3b049d7523ffd530fcb8005732ff217d4de578d8/rubocop-airbnb/lib/rubocop/airbnb/inject.rb
 #   (c) 2012 Airbnb
@@ -6,7 +8,7 @@
 require 'yaml'
 
 module RuboCop
-  module Akouryy
+  module Akouryy # :nodoc:
     # Because RuboCop doesn't yet support plugins, we have to monkey patch in a
     # bit of our configuration.
     def self.inject_defaults!

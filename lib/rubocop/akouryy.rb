@@ -1,3 +1,5 @@
-require "rubocop/akouryy/version"
+# frozen_string_literal: true
 
-require "rubocop/cop/akouryy/redundant_parentheses_for_method_call"
+require 'rubocop/akouryy/version'
+
+require 'rubocop/cop/akouryy/redundant_parentheses_for_method_call'

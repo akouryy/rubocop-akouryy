@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'set'
 
 module RuboCop
@@ -174,7 +175,7 @@ module RuboCop
           ^(send
             !equal?(%0)
             _
-            ...               #{ '%0 is here'; nil }
+            ...               #{'%0 is here' * 0}
             !equal?(%0))
         PAT
 
@@ -189,7 +190,7 @@ module RuboCop
 
         private def_node_matcher :with_arg_s_and_brace_block?, <<~PAT
           [
-            (send _ _ _ ...)  #{ '>=1 args'; nil }
+            (send _ _ _ ...)  #{'>=1 args' * 0}
             ^[
               (block ...)
               braces?

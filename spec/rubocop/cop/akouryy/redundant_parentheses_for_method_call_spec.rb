@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Forked from:
 #   https://github.com/rubocop-hq/rubocop/blob/00fe34e08f680ae7e45f78bfe27c453cc12bb44a/spec/rubocop/cop/style/method_call_without_args_parentheses_spec.rb
 #   (c) 2012-18 Bozhidar Batsov
@@ -83,7 +85,8 @@ describe RuboCop::Cop::Akouryy::RedundantParenthesesForMethodCall do
       RUBY
     end
 
-    it 'accepts parens for method calls that are operands of binary operators with high precedence' do
+    it 'accepts parens for method calls that are operands of' \
+        ' binary operators with high precedence' do
       expect_no_offenses <<~RUBY
         1 + foo(0)
         foo(0) ** 2

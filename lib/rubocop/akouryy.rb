@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rubocop/cop/akouryy/redundant_parentheses_for_method_call'
 
 module RuboCop
   module Akouryy # :nodoc:
@@ -10,5 +9,6 @@ module RuboCop
   end
 end
 
-require 'rubocop/akouryy/inject'
-require 'rubocop/akouryy/version'
+require_relative 'cop/akouryy/redundant_parentheses_for_method_call'
+require_relative 'akouryy/inject'
+require_relative 'akouryy/version'

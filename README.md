@@ -1,5 +1,8 @@
 # Rubocop::Expert
 
+[![Gem Version](https://badge.fury.io/rb/rubocop-expert.svg)](https://badge.fury.io/rb/rubocop-expert)
+[![MIT License](https://img.shields.io/badge/ilcense-MIT-blue.svg)](LICENSE.txt)
+
 [RuboCop](https://github.com/rubocop-hq/rubocop/) custom cops for elegance.
 
 ## Installation

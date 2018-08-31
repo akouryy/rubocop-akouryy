@@ -151,6 +151,23 @@ module RuboCop
           add_offense node, location: :begin
         end
 
+        PARENS_ALLOW_CHECKERS = %i[
+          among_multiple_args?
+          among_multiple_args_like?
+          array_element?
+          assoc_bracket_multiple_element?
+          default_of_optarg?
+          explicit_receiver?
+          hash_key_or_value?
+          high_operand?
+          implicit_call?
+          rescue_error_type?
+          splat_like?
+          when_cond?
+          with_arg_s_and_brace_block?
+        ].freeze
+        private_constant :PARENS_ALLOW_CHECKERS
+
         private def allowed_by_multiline_config? node
           fn_ln = node.loc.selector&.line
           first_arg_ln = node.arguments[0]&.loc&.line
@@ -274,7 +291,7 @@ module RuboCop
 
         private def high_operand? node
           high_method_operand?(node) || high_special_operand?(node) ||
-          ternary_operand?(node)
+            ternary_operand?(node)
         end
 
         private def high_operator? op
@@ -306,23 +323,9 @@ module RuboCop
 
         private def parens_allowed? node
           arg_s?(node) &&
-          %i[
-            among_multiple_args?
-            among_multiple_args_like?
-            array_element?
-            assoc_bracket_multiple_element?
-            default_of_optarg?
-            explicit_receiver?
-            hash_key_or_value?
-            high_operand?
-            implicit_call?
-            rescue_error_type?
-            splat_like?
-            when_cond?
-            with_arg_s_and_brace_block?
-          ].any? do |sym|
-            __send__ sym, node
-          end
+            PARENS_ALLOW_CHECKERS.any? do |sym|
+              __send__ sym, node
+            end
         end
 
         # covered by array_element?, but check again to ensure

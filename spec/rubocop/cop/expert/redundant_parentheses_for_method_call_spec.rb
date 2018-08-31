@@ -56,7 +56,7 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
         bar.
           foo(0 + 1)
              ^ Do not use unnecessary parentheses for method calls.
-        RUBY
+      RUBY
     end
 
     it 'registers an offense for parens with an argument which itself needs parens' do
@@ -172,7 +172,7 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
                  ^ Do not use unnecessary parentheses for method calls.
         begin end while foo(0, 1)
                            ^ Do not use unnecessary parentheses for method calls.
-        RUBY
+      RUBY
     end
 
     it 'registers an offence for parens of a call as a case-stmt subject' do

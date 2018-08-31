@@ -133,10 +133,19 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       RUBY
     end
 
-    it 'registers an offence for parens of a method call in single-value return' do
+    it 'registers an offence for parens of a method call as'\
+        ' the single expr of a method call-like syntax' do
       expect_offense <<~RUBY
         return foo(0, 1)
                   ^ Do not use unnecessary parentheses for method calls.
+        next foo(0, 1)
+                ^ Do not use unnecessary parentheses for method calls.
+        break foo(0, 1)
+                 ^ Do not use unnecessary parentheses for method calls.
+        super foo(0, 1)
+                 ^ Do not use unnecessary parentheses for method calls.
+        raise foo(0, 1)
+                 ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
@@ -253,6 +262,17 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
         RUBY
       end
 
+      it 'accepts parens for a method call among multiple exprs of a method call-like syntax' do
+        expect_no_offenses <<~RUBY
+          return 0, foo(1)
+          return foo(0), 1
+          break 0, foo(1)
+          next foo(0), 1
+          super 0, foo(1), *a
+          raise foo(0), 1
+        RUBY
+      end
+
       it 'accepts parens for a call among multiple elements of assoc bracket' do
         expect_no_offenses <<~RUBY
           foo[bar(0), 1]
@@ -264,13 +284,6 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       it 'accepts parens for method calls in right hand side of multi-assignment' do
         expect_no_offenses <<~RUBY
           a = 0, foo(1)
-        RUBY
-      end
-
-      it 'accepts parens for method calls in multiple return' do
-        expect_no_offenses <<~RUBY
-          return 0, foo(1)
-          return foo(0), 1
         RUBY
       end
 

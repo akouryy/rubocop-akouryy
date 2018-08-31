@@ -173,11 +173,13 @@ module RuboCop
               !equal?(%0)
               _
               _ _ ...)        #{'>=2 args; %0 is here' * 0}
-            #fn?]
+            #fn_style?]
         PAT
 
-        private def_node_matcher :among_multiple_return?, <<~PAT
-          ^(return _ _ ...)   #{'>=1 values' * 0}
+        private def_node_matcher :among_multiple_args_like?, <<~PAT
+          ^(
+            {return break next super}
+            _ _ ...)          #{'>=1 values' * 0}
         PAT
 
         private def_node_matcher :arg_s?, '(send _ _ _ ...)' # >=1 args
@@ -196,7 +198,7 @@ module RuboCop
                 :[]=
                 _ _ ...       #{'>=2 elements; %0 is here' * 0}
                 _)}           #{': expr after "="' * 0}
-            !#fn?]
+            !#fn_style?]
         PAT
 
         private def_node_matcher :bracket_receiver?, <<~PAT
@@ -205,7 +207,7 @@ module RuboCop
               equal?(%0)
               { :[] :[]= }
               ...)
-            !#fn?
+            !#fn_style?
           ]
         PAT
 
@@ -231,7 +233,7 @@ module RuboCop
           bracket_receiver?(node) || dot_receiver?(node)
         end
 
-        private def_node_matcher :fn?, <<~PAT
+        private def_node_matcher :fn_style?, <<~PAT
           {
             (send nil? ...)
             [
@@ -255,7 +257,7 @@ module RuboCop
               _
               #high_operator?
               equal?(%0))
-            !#fn?
+            !#fn_style?
           ]
         PAT
 
@@ -265,7 +267,7 @@ module RuboCop
               equal?(%0)
               #high_operator?
               ...)
-            !#fn?
+            !#fn_style?
             !keyword_not?
           ]
         PAT
@@ -306,12 +308,12 @@ module RuboCop
           arg_s?(node) &&
           %i[
             among_multiple_args?
-            among_multiple_return?
+            among_multiple_args_like?
             array_element?
             assoc_bracket_multiple_element?
             default_of_optarg?
             explicit_receiver?
-            hash_element?
+            hash_key_or_value?
             high_operand?
             implicit_call?
             rescue_error_type?

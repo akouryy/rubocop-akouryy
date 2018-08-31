@@ -239,10 +239,9 @@ module RuboCop
               dot?]}
         PAT
 
-        private def_node_matcher :hash_element?, <<~PAT
+        private def_node_matcher :hash_key_or_value?, <<~PAT
           [
             ^^(hash ...)
-            ^(pair _ equal?(%0))
           ]
         PAT
 

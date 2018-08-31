@@ -47,6 +47,7 @@ module RuboCop
       #   # Parentheses are required.
       #   -foo(0)
       #   foo(0) + 1
+      #   foo(0) ? bar(1) : baz(2)
       #   foo(0).bar
       #   foo(0){}
       #   foo 0, bar(1)
@@ -177,6 +178,8 @@ module RuboCop
           ^(return _ _ ...)   #{'>=1 values' * 0}
         PAT
 
+        private def_node_matcher :arg_s?, '(send _ _ _ ...)' # >=1 args
+
         private def_node_matcher :array_element?, '^(array ...)'
 
         private def_node_matcher :bracket_receiver?, <<~PAT
@@ -243,7 +246,8 @@ module RuboCop
         PAT
 
         private def high_operand? node
-          high_method_operand?(node) || high_special_operand?(node)
+          high_method_operand?(node) || high_special_operand?(node) ||
+          ternary_operand?(node)
         end
 
         private def high_operator? op
@@ -274,6 +278,7 @@ module RuboCop
         end
 
         private def parens_allowed? node
+          arg_s?(node) &&
           %i[
             among_multiple_args?
             among_multiple_return?
@@ -294,6 +299,8 @@ module RuboCop
         private def_node_matcher :special_operand?, '^({and or} ...)'
 
         private def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
+
+        private def_node_matcher :ternary_operand?, '^[(if ...) ternary?]'
 
         private def_node_matcher :when_cond?, '^(when equal?(%0) _)'
 

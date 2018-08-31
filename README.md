@@ -10,12 +10,6 @@ Add this line to Gemfile:
 gem 'rubocop-akouryy'
 ```
 
-Or install it yourself as:
-
-```
-gem install rubocop rubocop-rspec rubocop-akouryy
-```
-
 ## Usage
 
 Require this gem in .rubocop.yml:

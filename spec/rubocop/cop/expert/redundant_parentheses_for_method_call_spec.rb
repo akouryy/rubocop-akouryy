@@ -108,10 +108,36 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       RUBY
     end
 
+    it 'registers an offence for parens of a call as a if-stmt condition' do
+      expect_offense <<~RUBY
+        if foo(0, 1)
+              ^ Do not use unnecessary parentheses for method calls.
+        elsif bar(2, *3)
+                 ^ Do not use unnecessary parentheses for method calls.
+        end
+      RUBY
+    end
+
     it 'registers an offence for parens of a call as a for-stmt enumerable' do
       expect_offense <<~RUBY
         for a in foo(0, 1); end
                     ^ Do not use unnecessary parentheses for method calls.
+      RUBY
+    end
+
+    it 'registers an offence for parens of a call as a while-stmt condition' do
+      expect_offense <<~RUBY
+        while foo(0, 1); end
+                 ^ Do not use unnecessary parentheses for method calls.
+        begin end while foo(0, 1)
+                           ^ Do not use unnecessary parentheses for method calls.
+        RUBY
+    end
+
+    it 'registers an offence for parens of a call as a case-stmt subject' do
+      expect_offense <<~RUBY
+        case foo(0, 1); when nil; end
+                ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 

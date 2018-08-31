@@ -315,6 +315,7 @@ module RuboCop
             hash_element?
             high_operand?
             implicit_call?
+            rescue_error_type?
             splat_like?
             when_cond?
             with_arg_s_and_brace_block?
@@ -322,6 +323,13 @@ module RuboCop
             __send__ sym, node
           end
         end
+
+        # covered by array_element?, but check again to ensure
+        private def_node_matcher :rescue_error_type?, <<~PAT
+          [
+            ^^(resbody ...)
+            ^(array ...)]
+        PAT
 
         private def_node_matcher :special_operand?, '^({and or} ...)'
 

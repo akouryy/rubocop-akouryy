@@ -71,6 +71,8 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
            ^ Do not use unnecessary parentheses for method calls.
         foo((a while b))
            ^ Do not use unnecessary parentheses for method calls.
+        foo((a; b))
+           ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
@@ -83,6 +85,9 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
            ^ Do not use unnecessary parentheses for method calls.
         not foo(0)
                ^ Do not use unnecessary parentheses for method calls.
+        foo(0) rescue bar(1)
+           ^ Do not use unnecessary parentheses for method calls.
+                         ^ Do not use unnecessary parentheses for method calls.
       RUBY
     end
 
@@ -273,6 +278,13 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       it 'accepts parens for method calls in when condition' do
         expect_no_offenses <<~RUBY
           case 0; when foo(1); end
+        RUBY
+      end
+
+      it 'accepts parens for a call as error type to rescue' do
+        expect_no_offenses <<~RUBY
+          begin rescue foo(0); end
+          begin rescue foo(0) => e; end
         RUBY
       end
 

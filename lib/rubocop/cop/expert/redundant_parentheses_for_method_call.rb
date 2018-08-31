@@ -267,6 +267,7 @@ module RuboCop
               #high_operator?
               ...)
             !#fn?
+            !keyword_not?
           ]
         PAT
 

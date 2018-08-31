@@ -326,7 +326,15 @@ module RuboCop
 
         private def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
 
-        private def_node_matcher :ternary_operand?, '^[(if ...) ternary?]'
+        private def_node_matcher :ternary_operand?, <<~PAT
+          {
+            ^[(if ...) ternary?]
+            [
+              ^^[(if ...) ternary?]
+              ^{
+                (lvasgn _ equal?(%0))
+                (op_asgn _ _ equal?(%0))}]}
+        PAT
 
         private def_node_matcher :when_cond?, '^(when equal?(%0) _)'
 

@@ -56,7 +56,7 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
         bar.
           foo(0 + 1)
              ^ Do not use unnecessary parentheses for method calls.
-      RUBY
+        RUBY
     end
 
     it 'registers an offense for parens with splat operators' do
@@ -175,6 +175,9 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       it 'accepts parens for a method call that is an operand of a ternary operator' do
         expect_no_offenses <<~RUBY
           foo(0) ? bar(1) : baz(2)
+          a ? b = foo(0) : c
+          a ? b : c = foo(0)
+          a ? b **= foo(0) : c
         RUBY
       end
 
@@ -287,6 +290,17 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
                           ^ Do not use unnecessary parentheses for method calls.
         RUBY
       end
+    end
+
+    it 'registers an offence for parens of a call in parenthesized assignment' do
+      expect_offense <<~RUBY
+        a ? (b = foo(0)) : c
+                    ^ Do not use unnecessary parentheses for method calls.
+        a ? b : (c = foo(0))
+                        ^ Do not use unnecessary parentheses for method calls.
+        a ? (b **= foo(0)) : c
+                      ^ Do not use unnecessary parentheses for method calls.
+      RUBY
     end
   end
 

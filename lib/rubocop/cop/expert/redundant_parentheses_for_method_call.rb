@@ -47,6 +47,7 @@ module RuboCop
       #   # Parentheses are required.
       #   -foo(0)
       #   foo(0) + 1
+      #   foo(0) ? bar(1) : baz(2)
       #   foo(0).bar
       #   foo(0){}
       #   foo 0, bar(1)
@@ -150,6 +151,23 @@ module RuboCop
           add_offense node, location: :begin
         end
 
+        PARENS_ALLOW_CHECKERS = %i[
+          among_multiple_args?
+          among_multiple_args_like?
+          array_element?
+          assoc_bracket_multiple_element?
+          default_of_optarg?
+          explicit_receiver?
+          hash_key_or_value?
+          high_operand?
+          implicit_call?
+          rescue_error_type?
+          splat_like?
+          when_cond?
+          with_arg_s_and_brace_block?
+        ].freeze
+        private_constant :PARENS_ALLOW_CHECKERS
+
         private def allowed_by_multiline_config? node
           fn_ln = node.loc.selector&.line
           first_arg_ln = node.arguments[0]&.loc&.line
@@ -167,17 +185,38 @@ module RuboCop
         end
 
         private def_node_matcher :among_multiple_args?, <<~PAT
-          ^(send
-            !equal?(%0)
-            _
-            ...)              #{'%0 is here' * 0}
+          ^[
+            (send
+              !equal?(%0)
+              _
+              _ _ ...)        #{'>=2 args; %0 is here' * 0}
+            #fn_style?]
         PAT
 
-        private def_node_matcher :among_multiple_return?, <<~PAT
-          ^(return _ _ ...)   #{'>=1 values' * 0}
+        private def_node_matcher :among_multiple_args_like?, <<~PAT
+          ^(
+            {return break next super}
+            _ _ ...)          #{'>=1 values' * 0}
         PAT
+
+        private def_node_matcher :arg_s?, '(send _ _ _ ...)' # >=1 args
 
         private def_node_matcher :array_element?, '^(array ...)'
+
+        private def_node_matcher :assoc_bracket_multiple_element?, <<~PAT
+          ^[
+            {
+              (send
+                !equal?(%0)
+                :[]
+                _ _ ...)      #{'>=2 elements; %0 is here' * 0}
+              (send
+                !equal?(%0)
+                :[]=
+                _ _ ...       #{'>=2 elements; %0 is here' * 0}
+                _)}           #{': expr after "="' * 0}
+            !#fn_style?]
+        PAT
 
         private def_node_matcher :bracket_receiver?, <<~PAT
           ^[
@@ -185,7 +224,7 @@ module RuboCop
               equal?(%0)
               { :[] :[]= }
               ...)
-            !dot?
+            !#fn_style?
           ]
         PAT
 
@@ -211,10 +250,17 @@ module RuboCop
           bracket_receiver?(node) || dot_receiver?(node)
         end
 
-        private def_node_matcher :hash_element?, <<~PAT
+        private def_node_matcher :fn_style?, <<~PAT
+          {
+            (send nil? ...)
+            [
+              (send ...)
+              dot?]}
+        PAT
+
+        private def_node_matcher :hash_key_or_value?, <<~PAT
           [
             ^^(hash ...)
-            ^(pair _ equal?(%0))
           ]
         PAT
 
@@ -225,10 +271,10 @@ module RuboCop
         private def_node_matcher :high_method_operator_arg?, <<~PAT
           ^[
             (send
-              !nil?
+              _
               #high_operator?
               equal?(%0))
-            !dot?
+            !#fn_style?
           ]
         PAT
 
@@ -238,12 +284,14 @@ module RuboCop
               equal?(%0)
               #high_operator?
               ...)
-            !dot?
+            !#fn_style?
+            !keyword_not?
           ]
         PAT
 
         private def high_operand? node
-          high_method_operand?(node) || high_special_operand?(node)
+          high_method_operand?(node) || high_special_operand?(node) ||
+            ternary_operand?(node)
         end
 
         private def high_operator? op
@@ -274,26 +322,32 @@ module RuboCop
         end
 
         private def parens_allowed? node
-          %i[
-            among_multiple_args?
-            among_multiple_return?
-            array_element?
-            default_of_optarg?
-            explicit_receiver?
-            hash_element?
-            high_operand?
-            implicit_call?
-            splat_like?
-            when_cond?
-            with_arg_s_and_brace_block?
-          ].any? do |sym|
-            __send__ sym, node
-          end
+          arg_s?(node) &&
+            PARENS_ALLOW_CHECKERS.any? do |sym|
+              __send__ sym, node
+            end
         end
+
+        # covered by array_element?, but check again to ensure
+        private def_node_matcher :rescue_error_type?, <<~PAT
+          [
+            ^^(resbody ...)
+            ^(array ...)]
+        PAT
 
         private def_node_matcher :special_operand?, '^({and or} ...)'
 
         private def_node_matcher :splat_like?, '^({splat kwsplat block_pass} equal?(%0))'
+
+        private def_node_matcher :ternary_operand?, <<~PAT
+          {
+            ^[(if ...) ternary?]
+            [
+              ^^[(if ...) ternary?]
+              ^{
+                (lvasgn _ equal?(%0))
+                (op_asgn _ _ equal?(%0))}]}
+        PAT
 
         private def_node_matcher :when_cond?, '^(when equal?(%0) _)'
 

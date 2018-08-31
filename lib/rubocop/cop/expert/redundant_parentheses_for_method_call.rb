@@ -168,10 +168,12 @@ module RuboCop
         end
 
         private def_node_matcher :among_multiple_args?, <<~PAT
-          ^(send
-            !equal?(%0)
-            _
-            ...)              #{'%0 is here' * 0}
+          ^[
+            (send
+              !equal?(%0)
+              _
+              _ _ ...)        #{'>=2 args; %0 is here' * 0}
+            #fn?]
         PAT
 
         private def_node_matcher :among_multiple_return?, <<~PAT
@@ -182,13 +184,28 @@ module RuboCop
 
         private def_node_matcher :array_element?, '^(array ...)'
 
+        private def_node_matcher :assoc_bracket_multiple_element?, <<~PAT
+          ^[
+            {
+              (send
+                !equal?(%0)
+                :[]
+                _ _ ...)      #{'>=2 elements; %0 is here' * 0}
+              (send
+                !equal?(%0)
+                :[]=
+                _ _ ...       #{'>=2 elements; %0 is here' * 0}
+                _)}           #{': expr after "="' * 0}
+            !#fn?]
+        PAT
+
         private def_node_matcher :bracket_receiver?, <<~PAT
           ^[
             (send
               equal?(%0)
               { :[] :[]= }
               ...)
-            !dot?
+            !#fn?
           ]
         PAT
 
@@ -214,6 +231,14 @@ module RuboCop
           bracket_receiver?(node) || dot_receiver?(node)
         end
 
+        private def_node_matcher :fn?, <<~PAT
+          {
+            (send nil? ...)
+            [
+              (send ...)
+              dot?]}
+        PAT
+
         private def_node_matcher :hash_element?, <<~PAT
           [
             ^^(hash ...)
@@ -228,10 +253,10 @@ module RuboCop
         private def_node_matcher :high_method_operator_arg?, <<~PAT
           ^[
             (send
-              !nil?
+              _
               #high_operator?
               equal?(%0))
-            !dot?
+            !#fn?
           ]
         PAT
 
@@ -241,7 +266,7 @@ module RuboCop
               equal?(%0)
               #high_operator?
               ...)
-            !dot?
+            !#fn?
           ]
         PAT
 
@@ -283,6 +308,7 @@ module RuboCop
             among_multiple_args?
             among_multiple_return?
             array_element?
+            assoc_bracket_multiple_element?
             default_of_optarg?
             explicit_receiver?
             hash_element?

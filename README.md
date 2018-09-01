@@ -2,6 +2,8 @@
 
 [![Gem Version](https://badge.fury.io/rb/rubocop-expert.svg)](https://badge.fury.io/rb/rubocop-expert)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
+[![Build Status](https://travis-ci.org/akouryy/rubocop-expert.svg?branch=master)](https://travis-ci.org/akouryy/rubocop-expert)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/75e1c678fc0ee4fa0493/test_coverage)](https://codeclimate.com/github/akouryy/rubocop-expert/test_coverage))
 
 [RuboCop](https://github.com/rubocop-hq/rubocop/) custom cops for elegance.
 

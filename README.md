@@ -1,10 +1,9 @@
-# Rubocop::Expert
+# RuboCop::Expert [![Gem](https://img.shields.io/gem/v/rubocop-expert.svg?logo=ruby&logoColor=ff1111&colorA=404040)](https://rubygems.org/gems/rubocop-expert)
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?logo=github&logoColor=ffffff&colorA=404040)](LICENSE.txt)
-[![Gem](https://img.shields.io/gem/v/rubocop-expert.svg?logo=ruby&logoColor=ff1111&colorA=404040)](https://rubygems.org/gems/rubocop-expert)
 [![Travis CI](https://img.shields.io/travis/akouryy/rubocop-expert.svg?logo=travis&colorA=404040)](https://travis-ci.org/akouryy/rubocop-expert)
-[![Maintainability](https://api.codeclimate.com/v1/badges/75e1c678fc0ee4fa0493/maintainability)](https://codeclimate.com/github/akouryy/rubocop-expert/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/75e1c678fc0ee4fa0493/test_coverage)](https://codeclimate.com/github/akouryy/rubocop-expert/test_coverage)
+[![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/akouryy/rubocop-expert.svg?colorA=404040&logoColor=ffffff)](https://codeclimate.com/github/akouryy/rubocop-expert/maintainability)
+[![Test Coverage](https://img.shields.io/codeclimate/coverage/akouryy/rubocop-expert.svg?colorA=404040&logoColor=ffffff)](https://codeclimate.com/github/akouryy/rubocop-expert/test_coverage)
 
 [RuboCop](https://github.com/rubocop-hq/rubocop/) custom cops for elegance.
 

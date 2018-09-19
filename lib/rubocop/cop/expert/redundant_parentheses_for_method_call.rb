@@ -150,6 +150,7 @@ module RuboCop
           return if allowed_by_multiline_config? node
           add_offense node, location: :begin
         end
+        alias on_csend on_send
 
         PARENS_ALLOW_CHECKERS = %i[
           among_multiple_args?
@@ -186,7 +187,7 @@ module RuboCop
 
         private def_node_matcher :among_multiple_args?, <<~PAT
           ^[
-            (send
+            ({send csend}
               !equal?(%0)
               _
               _ _ ...)        #{'>=2 args; %0 is here' * 0}
@@ -199,7 +200,7 @@ module RuboCop
             _ _ ...)          #{'>=1 values' * 0}
         PAT
 
-        private def_node_matcher :arg_s?, '(send _ _ _ ...)' # >=1 args
+        private def_node_matcher :arg_s?, '({send csend} _ _ _ ...)' # >=1 args
 
         private def_node_matcher :array_element?, '^(array ...)'
 
@@ -237,13 +238,15 @@ module RuboCop
         PAT
 
         private def_node_matcher :dot_receiver?, <<~PAT
-          ^[
-            (send
+          {
+            ^[
+              (send
+                equal?(%0)
+                ...)
+              dot?]
+            ^(csend
               equal?(%0)
-              $_
-              ...)
-            dot?
-          ]
+              ...)}
         PAT
 
         private def explicit_receiver? node
@@ -253,6 +256,7 @@ module RuboCop
         private def_node_matcher :fn_style?, <<~PAT
           {
             (send nil? ...)
+            (csend ...)
             [
               (send ...)
               dot?]}
@@ -353,7 +357,7 @@ module RuboCop
 
         private def_node_matcher :with_arg_s_and_brace_block?, <<~PAT
           [
-            (send _ _ _ ...)  #{'>=1 args' * 0}
+            ({send csend} _ _ _ ...)  #{'>=1 args' * 0}
             ^[
               (block ...)
               braces?

@@ -7,6 +7,9 @@
 
 describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
   subject(:cop) { described_class.new config }
+  let(:ruby_version) { RUBY_VERSION.to_f }
+  lonely = RUBY_VERSION.to_f >= 2.5
+  let(:lonely) { RUBY_VERSION.to_f >= 2.5 }
 
   context 'without args' do
     it 'registers an offense for parens' do
@@ -57,6 +60,15 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
           foo(0 + 1)
              ^ Do not use unnecessary parentheses for method calls.
       RUBY
+    end
+
+    if lonely
+      it 'registers an offense for parens with simple lonely method arguments' do
+        expect_offense <<~RUBY
+          bar&.foo(1)
+                  ^ Do not use unnecessary parentheses for method calls.
+        RUBY
+      end
     end
 
     it 'registers an offense for parens with an argument which itself needs parens' do
@@ -232,6 +244,7 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       it 'accepts parens for method calls followed by dot' do
         expect_no_offenses <<~RUBY
           foo(0).bar
+          #{'foo(0)&.bar' if lonely}
         RUBY
       end
 
@@ -251,12 +264,15 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
       it 'accepts parens for special call syntax of method named \'call\'' do
         expect_no_offenses <<~RUBY
           foo.(0)
+          #{'foo&.(0)' if lonely}
         RUBY
       end
 
       it 'accepts parens for a method call that is among multiple args of other method calls' do
         expect_no_offenses <<~RUBY
           foo bar(0), 1
+          baz.foo bar(0), 1
+          #{'baz&.foo bar(0), 1' if lonely}
           foo 0, 1, bar(2)
           foo 0, bar(1), *baz
         RUBY
@@ -270,6 +286,7 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
           next foo(0), 1
           super 0, foo(1), *a
           raise foo(0), 1
+          # yield foo(0), 1, **a
         RUBY
       end
 
@@ -350,6 +367,15 @@ describe RuboCop::Cop::Expert::RedundantParenthesesForMethodCall, :config do
           def foo a = (bar(0)); end
                           ^ Do not use unnecessary parentheses for method calls.
         RUBY
+      end
+
+      if lonely
+        it 'registers an offense for parens of lonely method call' do
+          expect_offense <<~RUBY
+            (foo(0))&.bar
+                ^ Do not use unnecessary parentheses for method calls.
+          RUBY
+        end
       end
     end
 

@@ -7,15 +7,32 @@
 
 [RuboCop](https://github.com/rubocop-hq/rubocop/) custom cops for elegance.
 
-## Installation
+* [Cops](#cops)
+  * [RedundantParenthesesForMethodCall](#redundantparenthesesformethodcall)
+* [Installation and Usage](#installation-and-usage)
+* [License](#license)
+
+## Cops
+
+### RedundantParenthesesForMethodCall
+
+This cop checks for any *redundant* parentheses for method calls even with arguments.
+```ruby
+# bad
+foo(/a/, *b)
+# good
+foo /a/, *b
+```
+
+For more information and examples, refer to the documentation comment in [redundant_parentheses_for_method_call.rb](lib/rubocop/cop/expert/redundant_parentheses_for_method_call.rb).
+
+## Installation and Usage
 
 Add this line to Gemfile:
 
 ```ruby
 gem 'rubocop-akouryy'
 ```
-
-## Usage
 
 Require this gem in .rubocop.yml:
 
@@ -24,10 +41,11 @@ require:
   - rubocop-expert
 ```
 
-### Cops
+Now you can check your code with:
 
-The list and documentation of cops are available at
-[/lib/rubocop/cop/expert](https://github.com/akouryy/rubocop-expert/tree/master/lib/rubocop/cop/expert).
+```sh
+$ rubocop
+```
 
 ## Development
 

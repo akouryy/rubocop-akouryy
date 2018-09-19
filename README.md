@@ -32,7 +32,7 @@ For more information and examples, refer to the documentation comment in [redund
 Add this line to Gemfile:
 
 ```ruby
-gem 'rubocop-akouryy'
+gem 'rubocop-expert'
 ```
 
 Require this gem in .rubocop.yml:
